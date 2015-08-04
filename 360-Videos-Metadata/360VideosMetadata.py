@@ -548,6 +548,7 @@ class mpeg4(container_box):
                 break
             new_position += element.size()
         delta = new_position - self.first_mdat_position
+
         for element in self.contents:
             element.save(in_fh, out_fh, delta)
 
