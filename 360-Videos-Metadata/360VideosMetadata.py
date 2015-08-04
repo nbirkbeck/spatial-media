@@ -457,9 +457,9 @@ class mpeg4(container_box):
         self.header_size = 0
         self.moov_box = None
         self.free_box = None
-        self.first_mdat_box = None
+        self.mdat_boxes = []
         self.ftyp_box = None
-        self.first_mdat_position = None
+        self.mdat_positions = []
 
     @staticmethod
     def load(fh):
@@ -494,8 +494,8 @@ class mpeg4(container_box):
                 loaded_mpeg4.moov_box = element
             if (element.name == "free"):
                 loaded_mpeg4.free_box = element
-            if (element.name == "mdat" and loaded_mpeg4.first_mdat_box is None):
-                loaded_mpeg4.first_mdat_box = element
+            if (element.name == "mdat"):
+                loaded_mpeg4.mdat_boxes.append(element)
             if (element.name == "ftyp"):
                 loaded_mpeg4.ftyp_box = element
 
@@ -503,13 +503,13 @@ class mpeg4(container_box):
             print ("Error, file does not contain moov box.")
             return None
 
-        if (loaded_mpeg4.first_mdat_box is None):
+        if (len(loaded_mpeg4.mdat_boxes) == 0):
             print ("Error, file does not contain mdat box.")
             return None
 
-        loaded_mpeg4.first_mdat_position = loaded_mpeg4.first_mdat_box.position
-        loaded_mpeg4.first_mdat_position += loaded_mpeg4.first_mdat_box.header_size
 
+        loaded_mpeg4.mdat_positions = [mdat_box.position + mdat_box.header_size for
+                                       mdat_box in loaded_mpeg4.mdat_boxes]
         loaded_mpeg4.content_size = 0
         for element in loaded_mpeg4.contents:
             loaded_mpeg4.content_size += element.size()
@@ -541,16 +541,16 @@ class mpeg4(container_box):
           out_fh: file handle, destination file hand for saved file.
         """
         self.resize()
-        new_position = 0
+        current_offset = 0
+        delta = 0
+        mdat_index = 0
         for element in self.contents:
             if element.name == tag_mdat:
-                new_position += element.header_size
-                break
-            new_position += element.size()
-        delta = new_position - self.first_mdat_position
-
-        for element in self.contents:
+                delta = (current_offset + element.header_size -
+                         self.mdat_positions[mdat_index])
+                mdat_index += 1
             element.save(in_fh, out_fh, delta)
+            current_offset += element.size()
 
 
 def spherical_uuid(metadata):
