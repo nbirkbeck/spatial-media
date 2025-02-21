@@ -49,7 +49,7 @@ def main():
       "injects spatial media metadata into the first file specified (.mp4 or "
       ".mov) and saves the result to the second file specified")
   parser.add_argument(
-      "",
+      "-2",
       "--v2",
       action="store_true",
       help=
