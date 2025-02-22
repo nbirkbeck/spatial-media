@@ -198,8 +198,10 @@ def mpeg4_add_spherical_v2(mpeg4_file, in_fh, projection, stereo_mode):
                     position = mdia_sub_element.content_start() + 8
                     in_fh.seek(position)
                     if in_fh.read(4) == mpeg.constants.TAG_VIDE:
-                        return inject_spatial_video_v2_atoms(
+                        ret = inject_spatial_video_v2_atoms(
                             in_fh, sub_element, projection, stereo_mode)
+                        mpeg4_file.resize()
+                        return ret
 
 
 def inject_spatial_video_v2_atoms(in_fh, video_media_atom, projection, stereo_mode):

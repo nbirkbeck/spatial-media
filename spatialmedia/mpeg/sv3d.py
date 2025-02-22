@@ -68,7 +68,7 @@ class PRHDBox(box.Box):
         self.pose_yaw_degrees = 0
         self.pose_pitch_degrees = 0
         self.pose_roll_degrees = 0
-        self.content_size = 4 * 3
+        self.content_size = 16
 
     @staticmethod
     def create():
@@ -110,7 +110,7 @@ class EQUIBox(box.Box):
         self.bounds_bottom = 0
         self.bounds_left = 0
         self.bounds_right = 0
-        self.content_size = 16
+        self.content_size = 20
 
     @staticmethod
     def create():
@@ -151,7 +151,7 @@ class ST3DBox(box.Box):
         self.name = constants.TAG_EQUI
         self.header_size = 8
         self.stereo_mode = 0
-        self.content_size = 8
+        self.content_size = 5
 
     @staticmethod
     def create():
